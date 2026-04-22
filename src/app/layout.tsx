@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,41 +14,35 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // 控制提示显示
-  const [showTip, setShowTip] = useState(true);
-
-  useEffect(() => {
-    // 3 秒后隐藏（3000 毫秒）
-    const timer = setTimeout(() => {
-      setShowTip(false);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <html lang="zh-CN">
       <body className={inter.className}>
 
-        {/* 3 秒自动消失提示条 */}
-        {showTip && (
-          <div style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            zIndex: 9999,
-            background: "#eef5ff",
-            padding: "10px 16px",
-            textAlign: "center",
-            fontSize: 14,
-            color: "#165DFF",
-          }}>
-            仅供 安居中学 师生观摩学习使用 · 禁止商用
-          </div>
-        )}
+        {/* 3 秒自动消失提示条（纯JS，无React Hooks，不报错） */}
+        <div id="school-tip" style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          zIndex: 9999,
+          background: "#eef5ff",
+          padding: "10px 16px",
+          textAlign: "center",
+          fontSize: 14,
+          color: "#165DFF",
+        }}>
+          仅供 安居中学 师生观摩学习使用 · 禁止商用
+        </div>
 
-        {/* 内容自动避开提示条 */}
-        <div style={{ paddingTop: showTip ? "50px" : "0px" }}>
+        <script dangerouslySetInnerHTML={{ __html: `
+          setTimeout(() => {
+            const tip = document.getElementById('school-tip');
+            if (tip) tip.style.display = 'none';
+          }, 3000);
+        `}} />
+
+        {/* 内容自动下移，不遮挡 */}
+        <div style={{ paddingTop: "50px" }}>
           {children}
         </div>
 
@@ -62,7 +55,7 @@ export default function RootLayout({
           borderTop: '1px solid #eee',
           textAlign: 'center',
           fontSize: '12px',
-          color: '#666'
+          color: '#666',
         }}>
           本工具基于开源项目 PDFCraft 部署，遵循
           <strong> GNU AGPL-3.0 </strong>
