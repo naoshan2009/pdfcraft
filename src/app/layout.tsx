@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,27 +15,41 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [showTip, setShowTip] = useState(true);
+
+  useEffect(() => {
+    // 3 秒后自动隐藏提示条
+    const timer = setTimeout(() => {
+      setShowTip(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <html lang="zh-CN">
       <body className={inter.className}>
-        {/* 顶部提示条（不会被遮挡，自动撑开） */}
-        <div style={{
-          width: "100%",
-          boxSizing: "border-box",
-          background: '#eef5ff',
-          padding: '12px 16px',
-          textAlign: 'center',
-          fontSize: '14px',
-          color: '#165DFF',
-          lineHeight: "1.5",
-          position: "relative",
-          zIndex: 999,
-        }}>
-          仅供 安居中学 师生观摩学习使用 · 禁止商用
-        </div>
+        {showTip && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 9999,
+            background: "#eef5ff",
+            padding: "10px 16px",
+            textAlign: "center",
+            fontSize: 14,
+            color: "#165DFF",
+            animation: "fadeOut 0.5s ease 3s forwards",
+          }}>
+            仅供 安居中学 师生观摩学习使用 · 禁止商用
+          </div>
+        )}
 
-        {/* 关键：给主内容加顶部间距，防止被导航栏遮挡 */}
-        <div style={{ paddingTop: "10px" }}>
+        <div style={{
+          marginTop: showTip ? "50px" : "0",
+          transition: "margin 0.5s ease"
+        }}>
           {children}
         </div>
 
@@ -62,6 +77,13 @@ export default function RootLayout({
             https://github.com/PDFCraftTool/pdfcraft
           </a>
         </div>
+
+        <style jsx global>{`
+          @keyframes fadeOut {
+            from { opacity: 1; visibility: visible; }
+            to { opacity: 0; visibility: hidden; }
+          }
+        `}</style>
       </body>
     </html>
   );
