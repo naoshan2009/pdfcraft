@@ -15,10 +15,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // 控制提示显示
   const [showTip, setShowTip] = useState(true);
 
   useEffect(() => {
-    // 3 秒后自动隐藏提示条
+    // 3 秒后隐藏（3000 毫秒）
     const timer = setTimeout(() => {
       setShowTip(false);
     }, 3000);
@@ -28,28 +29,27 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className={inter.className}>
+
+        {/* 3 秒自动消失提示条 */}
         {showTip && (
           <div style={{
             position: "fixed",
             top: 0,
             left: 0,
-            right: 0,
+            width: "100%",
             zIndex: 9999,
             background: "#eef5ff",
             padding: "10px 16px",
             textAlign: "center",
             fontSize: 14,
             color: "#165DFF",
-            animation: "fadeOut 0.5s ease 3s forwards",
           }}>
             仅供 安居中学 师生观摩学习使用 · 禁止商用
           </div>
         )}
 
-        <div style={{
-          marginTop: showTip ? "50px" : "0",
-          transition: "margin 0.5s ease"
-        }}>
+        {/* 内容自动避开提示条 */}
+        <div style={{ paddingTop: showTip ? "50px" : "0px" }}>
           {children}
         </div>
 
@@ -78,12 +78,6 @@ export default function RootLayout({
           </a>
         </div>
 
-        <style jsx global>{`
-          @keyframes fadeOut {
-            from { opacity: 1; visibility: visible; }
-            to { opacity: 0; visibility: hidden; }
-          }
-        `}</style>
       </body>
     </html>
   );
