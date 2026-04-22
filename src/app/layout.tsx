@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className={inter.className}>
-        {/* 顶部提示条（修复版：全屏、不遮挡、不截断） */}
+        {/* 顶部提示条（不会被遮挡，自动撑开） */}
         <div style={{
           width: "100%",
           boxSizing: "border-box",
@@ -27,12 +27,16 @@ export default function RootLayout({
           fontSize: '14px',
           color: '#165DFF',
           lineHeight: "1.5",
-          whiteSpace: "pre-line"
+          position: "relative",
+          zIndex: 999,
         }}>
-          仅供安居中学 师生观摩学习使用 · 禁止商用
+          仅供 安居中学 师生观摩学习使用 · 禁止商用
         </div>
 
-        {children}
+        {/* 关键：给主内容加顶部间距，防止被导航栏遮挡 */}
+        <div style={{ paddingTop: "10px" }}>
+          {children}
+        </div>
 
         {/* 底部合规声明 */}
         <div style={{
